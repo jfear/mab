@@ -1,11 +1,11 @@
 [package]
 name = "mab"
 version.workspace = true
-edition.workspace = true
 authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
 license.workspace = true
 repository.workspace = true
-homepage.workspace = true
 rust-version.workspace = true
 
 [[bin]]
@@ -13,8 +13,8 @@ name = "mab"
 path = "src/main.rs"
 
 [dependencies]
-mab-core.workspace = true
 anyhow.workspace = true
+mab-core.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 

@@ -1,11 +1,11 @@
 [package]
 name = "mab-core"
 version.workspace = true
-edition.workspace = true
 authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
 license.workspace = true
 repository.workspace = true
-homepage.workspace = true
 rust-version.workspace = true
 
 [dependencies]
