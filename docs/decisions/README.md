@@ -7,3 +7,4 @@
 | ADR-0002 | [Use Iced with Elm-Like Architecture for the GUI](ADR-0002-use-iced-elm-architecture.md)           | accepted | 2025-08-22 | gui, framework, architecture |
 | ADR-0003 | [Adopt cargo-deny, cargo-audit, cargo-machete, and just for Tooling](ADR-0003-build-tooling.md)    | accepted | 2025-08-22 | tooling, ci, dependencies    |
 | ADR-0004 | [Use dprint for Markdown and Configuration Formatting](ADR-0004-use-dprint-for-docs-and-config.md) | accepted | 2025-08-22 | tooling, formatting, docs    |
+| ADR-0005 | [Use thiserror for Library Crates and anyhow for Binaries](ADR-0005-library-error-handling.md)     | accepted | 2026-08-26 | error-handling, api-design   |
