@@ -34,14 +34,17 @@ allow = [
   "CC0-1.0",
 ]
 confidence-threshold = 0.8
+# Don't warn about allowed licenses that no current dependency uses; the list is
+# a pre-approved set, not a snapshot of the current dependency tree.
+unused-allowed-license = "allow"
 # License exceptions for specific crates go here
 exceptions = []
 
 [bans]
-# Warn when multiple versions of the same crate appear in the dependency tree.
-# This is a warning rather than an error because duplicate versions are sometimes
-# unavoidable in the Rust ecosystem.
-multiple-versions = "warn"
+# Allow multiple versions of the same crate. Versions are managed at the
+# workspace level, and duplicate versions pulled in by transitive deps
+# (e.g. syn v2 and v3) are usually outside our control.
+multiple-versions = "allow"
 # Allow wildcard dependencies (workspace = true uses them internally).
 wildcards = "allow"
 # Highlight all duplicates, not just the first
