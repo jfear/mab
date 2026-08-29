@@ -9,8 +9,10 @@
 //! [`Error`] defined in [`error`]. See ADR-0005.
 
 pub mod error;
+pub mod strand;
 
 pub use error::Error;
+pub use strand::Strand;
 
 /// The result type used throughout this crate.
 pub type Result<T> = std::result::Result<T, Error>;

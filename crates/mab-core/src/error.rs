@@ -6,13 +6,13 @@
 //! context-bearing variants (`#[source]`). See ADR-0005.
 
 /// The error type for all fallible operations in `mab-core`.
-///
-/// This enum starts empty and grows variants as fallible APIs are added.
-/// It is non-exhaustive, so new variants can be added without a
-/// semver-breaking release.
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 #[non_exhaustive]
-pub enum Error {}
+pub enum Error {
+    /// Invalid strand string (expected `+`, `-`, or `.`).
+    #[error("invalid strand: {0:?} (expected '+', '-', or '.')")]
+    StrandParse(String),
+}
 
 #[cfg(test)]
 mod tests {
