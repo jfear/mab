@@ -33,6 +33,9 @@ with deliberate, spec-driven, ADR-documented design.
   (pinned to the 2026.1.2 SDK).
 - Consult `docs/igv_reviews/` when designing data models, tracks, or storage;
   it is a detailed analysis of IGV's architecture (pinned to v3.0.0-beta.4).
+- Consult `docs/jbrowse_reviews/` when designing data models, configuration,
+  adapters, tracks/displays, or session state; it is a detailed analysis of
+  JBrowse 2's architecture (pinned to v4.3.0, commit 83ac4507cf).
 - Place reusable project skills in `./skills/<skill-name>/SKILL.md`.
 
 ## ADR Process
