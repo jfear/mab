@@ -28,6 +28,9 @@ with deliberate, spec-driven, ADR-documented design.
   types and algorithms.
 - Document significant architectural choices as ADRs in `docs/decisions/`.
 - Update `docs/decisions/README.md` whenever a new ADR is added.
+- Consult `docs/geneious_reviews/` when designing data models, storage, or the
+  operation pipeline; it is a detailed analysis of Geneious Prime's public API
+  (pinned to the 2026.1.2 SDK).
 - Place reusable project skills in `./skills/<skill-name>/SKILL.md`.
 
 ## ADR Process
