@@ -31,6 +31,8 @@ with deliberate, spec-driven, ADR-documented design.
 - Consult `docs/geneious_reviews/` when designing data models, storage, or the
   operation pipeline; it is a detailed analysis of Geneious Prime's public API
   (pinned to the 2026.1.2 SDK).
+- Consult `docs/igv_reviews/` when designing data models, tracks, or storage;
+  it is a detailed analysis of IGV's architecture (pinned to v3.0.0-beta.4).
 - Place reusable project skills in `./skills/<skill-name>/SKILL.md`.
 
 ## ADR Process
