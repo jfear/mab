@@ -8,10 +8,14 @@
 //! Fallible operations return [`Result`], whose error type is the crate-local
 //! [`Error`] defined in [`error`]. See ADR-0005.
 
+pub mod document;
 pub mod error;
+pub mod sequence;
 pub mod strand;
 
+pub use document::{AlignmentDocument, SequenceDocument};
 pub use error::Error;
+pub use sequence::{Alphabet, IupacAminoAcid, IupacDna, IupacRna, Sequence};
 pub use strand::Strand;
 
 /// The result type used throughout this crate.
