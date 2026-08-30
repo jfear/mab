@@ -8,7 +8,7 @@ with deliberate, spec-driven, ADR-documented design.
 
 - **Repository:** https://github.com/jfear/mab
 - **License:** MIT
-- **Author:** Justin Fear <justin.m.fear@gmail.com>
+- **Author:** Justin Fear
 
 ## Tech Stack
 

@@ -4,7 +4,7 @@ resolver = "3"
 
 [workspace.package]
 version = "0.1.0"
-authors = ["Justin Fear <justin.m.fear@gmail.com>"]
+authors = ["Justin Fear"]
 edition = "2024"
 homepage = "https://github.com/jfear/mab"
 license = "MIT"
