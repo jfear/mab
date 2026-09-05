@@ -66,4 +66,4 @@ When working in this area, an agent should:
 ## Links
 
 - Supersedes: ~
-- Related: `docs/geneious_reviews/02-sequence-model.md`
+- Related: `docs/research/geneious/02-sequence-model.md`

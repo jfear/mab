@@ -28,15 +28,22 @@ with deliberate, spec-driven, ADR-documented design.
   types and algorithms.
 - Document significant architectural choices as ADRs in `docs/decisions/`.
 - Update `docs/decisions/README.md` whenever a new ADR is added.
-- Consult `docs/geneious_reviews/` when designing data models, storage, or the
+- Consult `docs/research/geneious/` when designing data models, storage, or the
   operation pipeline; it is a detailed analysis of Geneious Prime's public API
   (pinned to the 2026.1.2 SDK).
-- Consult `docs/igv_reviews/` when designing data models, tracks, or storage;
+- Consult `docs/research/igv/` when designing data models, tracks, or storage;
   it is a detailed analysis of IGV's architecture (pinned to v3.0.0-beta.4).
-- Consult `docs/jbrowse_reviews/` when designing data models, configuration,
+- Consult `docs/research/jbrowse/` when designing data models, configuration,
   adapters, tracks/displays, or session state; it is a detailed analysis of
   JBrowse 2's architecture (pinned to v4.3.0, commit 83ac4507cf).
 - Place reusable project skills in `./skills/<skill-name>/SKILL.md`.
+- Use `./.pi/` as a local scratch pad and research area — it is gitignored
+  and not part of the published repo. Drop in exploratory notes, working
+  drafts, comparison documents, or anything else that helps a design
+  discussion without needing to land an ADR first. Anything that survives
+  the discussion and becomes a committed decision should graduate into
+  `docs/decisions/` (or wherever it belongs); ephemeral material can stay
+  here indefinitely.
 
 ## ADR Process
 
