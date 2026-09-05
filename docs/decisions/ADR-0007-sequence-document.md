@@ -21,11 +21,11 @@ Define `SequenceDocument<A: Alphabet>` with a flat core (`uid: Uuid`,
 `name`, `sequence: Sequence<A>`, `topology`, `annotations`) plus one
 nested `SequenceMetadata` struct of `Option`-typed source-derived
 fields (`description`, `accession`, `organism`, `genetic_code`,
-`taxonomy`, `source` provenance) and an `extras: BTreeMap` escape hatch
-for lossless import. The `uid` is a **content-derived v5 UUID**
-computed at creation via `Uuid::new_v5(MAB_NAMESPACE,
-sequence.as_bytes())`, optionally seeded by a source-derived
-intermediate uuid. Internal annotation coordinates are **0-based
+`taxonomy`) and an `extras: BTreeMap` escape hatch for lossless import.
+The `uid` is a **content-derived v5 UUID** computed at creation via
+`Uuid::new_v5(MAB_NAMESPACE, sequence.as_bytes())` — identity is a pure
+function of sequence content; import provenance is a storage-layer
+concern. Internal annotation coordinates are **0-based
 half-open**; derived statistics (length, GC%) are methods, not fields;
 dates and persistence concerns live in a future storage envelope.
 
@@ -45,9 +45,10 @@ dates and persistence concerns live in a future storage envelope.
   format-specific leftover.
 - ✅ Same sequence → same uid; duplicate imports are impossible.
 - ✅ Alphabet homogeneity enforced via ADR-0006's `<A: Alphabet>`.
-- ❌ Editing the sequence produces a new uid; two identical sequences
-  with no source info share a uid — resolved by a future edit-chain
-  concept and the source-aware v5 variant.
+- ❌ Editing the sequence produces a new uid; identical sequences share
+  a uid regardless of import source (dedup by design) — distinguishing
+  them, if ever needed, is future work (edit-chain / source-identity
+  concepts).
 
 ## AI Guidance
 
