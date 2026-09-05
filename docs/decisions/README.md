@@ -9,3 +9,4 @@
 | ADR-0004 | [Use dprint for Markdown and Configuration Formatting](ADR-0004-use-dprint-for-docs-and-config.md)   | accepted | 2025-08-22 | tooling, formatting, docs    |
 | ADR-0005 | [Use thiserror for Library Crates and anyhow for Binaries](ADR-0005-library-error-handling.md)       | accepted | 2026-08-26 | error-handling, api-design   |
 | ADR-0006 | [Model Sequences as a Generic Struct Parameterized by a Marker Alphabet](ADR-0006-sequence-model.md) | accepted | 2026-09-07 | domain-model, api-design     |
+| ADR-0007 | [Define SequenceDocument with Flat Core, Nested Metadata, and Content-Derived Uid](ADR-0007-sequence-document.md) | accepted | 2026-09-07 | domain-model, api-design, documents, metadata |
