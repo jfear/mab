@@ -10,7 +10,10 @@
 use crate::sequence::{Alphabet, Sequence};
 use uuid::Uuid;
 
+pub mod metadata;
 pub mod topology;
+
+pub use metadata::{SequenceMetadata, SequenceMetadataBuilder};
 pub use topology::Topology;
 
 /// Mab's UUID namespace for content-derived document identifiers.
