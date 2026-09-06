@@ -42,8 +42,7 @@ impl AnnotationInterval {
     /// # Examples
     ///
     /// ```
-    /// use mab_core::document::AnnotationInterval;
-    /// use mab_core::Interval;
+    /// use mab_core::{AnnotationInterval, Interval};
     ///
     /// let interval = Interval::new(10, 20).unwrap();
     /// let ann = AnnotationInterval::from_interval(interval, true, false);
@@ -120,8 +119,7 @@ impl SequenceAnnotation {
     /// # Examples
     ///
     /// ```
-    /// use mab_core::document::{AnnotationInterval, SequenceAnnotation};
-    /// use mab_core::Strand;
+    /// use mab_core::{AnnotationInterval, SequenceAnnotation, Strand};
     ///
     /// let annotation = SequenceAnnotation::new(
     ///     "lacZ",

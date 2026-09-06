@@ -20,6 +20,18 @@ pub struct Interval {
 }
 
 impl Interval {
+    /// Create a validated `[start, end)` interval.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use mab_core::Interval;
+    ///
+    /// let iv = Interval::new(10, 20).unwrap();
+    /// assert_eq!(iv.start(), 10);
+    /// assert_eq!(iv.end(), 20);
+    /// ```
+    ///
     /// # Errors
     ///
     /// Returns [`Error::InvalidInterval`] if `start >= end`.
@@ -47,6 +59,16 @@ impl Interval {
     }
 
     /// Two intervals share at least one position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use mab_core::Interval;
+    ///
+    /// let a = Interval::new(0, 5).unwrap();
+    /// let b = Interval::new(3, 8).unwrap();
+    /// assert!(a.overlaps(&b));
+    /// ```
     #[must_use]
     pub const fn overlaps(&self, other: &Self) -> bool {
         self.start < other.end && other.start < self.end

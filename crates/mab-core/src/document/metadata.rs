@@ -27,7 +27,7 @@ impl SequenceMetadata {
     /// # Examples
     ///
     /// ```
-    /// use mab_core::document::SequenceMetadata;
+    /// use mab_core::SequenceMetadata;
     ///
     /// let metadata = SequenceMetadata::builder()
     ///     .accession("AF000017.1")

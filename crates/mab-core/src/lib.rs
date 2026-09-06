@@ -14,7 +14,10 @@ pub mod interval;
 pub mod sequence;
 pub mod strand;
 
-pub use document::{AlignmentDocument, SequenceDocument};
+pub use document::{
+    AlignmentDocument, AnnotationInterval, SequenceAnnotation, SequenceDocument, SequenceMetadata,
+    SequenceMetadataBuilder, Topology,
+};
 pub use error::Error;
 pub use interval::Interval;
 pub use sequence::{Alphabet, IupacAminoAcid, IupacDna, IupacRna, Sequence};
