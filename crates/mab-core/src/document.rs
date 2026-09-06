@@ -16,6 +16,9 @@ use uuid::Uuid;
 pub const MAB_NAMESPACE: Uuid = uuid::uuid!("e2c4c74a-2df8-46ee-887d-8a517a92824a");
 
 /// Derive the content-based document uid: `v5(MAB_NAMESPACE, sequence bytes)`.
+///
+/// Consumed by the document constructors in a later batch of ADR-0007.
+#[allow(dead_code)] // TODO(ADR-0007): remove once SequenceDocument::with_metadata lands
 fn derive_uid(sequence_bytes: &[u8]) -> Uuid {
     Uuid::new_v5(&MAB_NAMESPACE, sequence_bytes)
 }
