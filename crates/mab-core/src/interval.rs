@@ -67,7 +67,11 @@ impl Interval {
         } else {
             other.start
         };
-        let end = if self.end < other.end { self.end } else { other.end };
+        let end = if self.end < other.end {
+            self.end
+        } else {
+            other.end
+        };
         if start < end {
             Some(Self { start, end })
         } else {
@@ -217,7 +221,11 @@ mod tests {
         assert!(!inner.contains_interval(&outer));
 
         let sticking_out = Interval::new(3, 8).unwrap();
-        assert!(!Interval::new(0, 5).unwrap().contains_interval(&sticking_out));
+        assert!(
+            !Interval::new(0, 5)
+                .unwrap()
+                .contains_interval(&sticking_out)
+        );
     }
 
     #[test]
