@@ -45,6 +45,28 @@ with deliberate, spec-driven, ADR-documented design.
   `docs/decisions/` (or wherever it belongs); ephemeral material can stay
   here indefinitely.
 
+## Spec-First Development
+
+Mab follows a spec-first workflow: before implementing a feature, write
+the spec, plan, and any supporting research documents. These live in
+`./.pi/` and are **never committed** — they are ephemeral working
+documents used only during development.
+
+```
+.pi/
+├── specs/       # Implementation specs (self-contained API + behavior)
+├── plans/       # Phase-by-phase implementation plans
+└── research/    # Background research, comparisons, invariant deep-dives
+```
+
+When working in a **git worktree**, `.pi/` is not part of the worktree
+because it is gitignored and untracked. The agent may need to read specs
+or plans from the **main repository's** `.pi/` directory rather than
+expecting them in the worktree. If the workflow creates temporary
+scratch files specific to a worktree session, place them in the
+worktree's `.pi/` (create it if needed — it will be cleaned up when the
+worktree is removed).
+
 ## ADR Process
 
 Before making or changing a significant architectural decision, check whether an
