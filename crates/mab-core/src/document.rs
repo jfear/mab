@@ -1,11 +1,24 @@
-//! Minimal document containers for sequences and alignments.
+//! Document containers for sequences and alignments.
 //!
-//! This module provides thin, generic placeholders that propagate a
-//! sequence's alphabet type parameter through documents. Detailed field
-//! design (metadata, annotations, coordinate systems, and gap handling) is
-//! intentionally deferred to a future ADR.
+//! This module provides the content-derived document identifier
+//! ([`MAB_NAMESPACE`] and [`derive_uid`]) along with thin, generic
+//! containers that propagate a sequence's alphabet type parameter through
+//! documents. Detailed field design (metadata, annotations, coordinate
+//! systems, and gap handling) is defined in ADR-0007
+//! (`docs/decisions/ADR-0007-sequence-document.md`).
 
 use crate::sequence::{Alphabet, Sequence};
+use uuid::Uuid;
+
+/// Mab's UUID namespace for content-derived document identifiers.
+///
+/// Fixed value — do not regenerate.
+pub const MAB_NAMESPACE: Uuid = uuid::uuid!("e2c4c74a-2df8-46ee-887d-8a517a92824a");
+
+/// Derive the content-based document uid: `v5(MAB_NAMESPACE, sequence bytes)`.
+fn derive_uid(sequence_bytes: &[u8]) -> Uuid {
+    Uuid::new_v5(&MAB_NAMESPACE, sequence_bytes)
+}
 
 /// A named sequence document.
 ///
@@ -63,6 +76,39 @@ pub struct AlignmentDocument<A: Alphabet> {
 mod tests {
     use super::*;
     use crate::sequence::{IupacDna, Sequence};
+
+    #[test]
+    fn derive_uid_is_deterministic() {
+        let first = derive_uid(b"ACGT");
+        let second = derive_uid(b"ACGT");
+        assert_eq!(first, second);
+    }
+
+    #[test]
+    fn derive_uid_matches_pinned_vector() {
+        assert_eq!(
+            derive_uid(b"ACGT"),
+            uuid::uuid!("6118f9aa-f48f-5d14-aef8-26ecf7587974")
+        );
+    }
+
+    #[test]
+    fn derive_uid_depends_only_on_sequence_bytes() {
+        // Same sequence contents under different names must yield the same
+        // uid: the identifier is content-derived, not metadata-derived.
+        let alpha = SequenceDocument {
+            name: "alpha".to_owned(),
+            sequence: Sequence::<IupacDna>::try_new("ACGT").unwrap(),
+        };
+        let beta = SequenceDocument {
+            name: "beta".to_owned(),
+            sequence: Sequence::<IupacDna>::try_new("ACGT").unwrap(),
+        };
+        assert_eq!(
+            derive_uid(alpha.sequence.as_bytes()),
+            derive_uid(beta.sequence.as_bytes())
+        );
+    }
 
     #[test]
     fn sequence_document_homogeneous_alphabet() {
