@@ -10,9 +10,11 @@
 use crate::sequence::{Alphabet, Sequence};
 use uuid::Uuid;
 
+pub mod annotation;
 pub mod metadata;
 pub mod topology;
 
+pub use annotation::{AnnotationInterval, SequenceAnnotation};
 pub use metadata::{SequenceMetadata, SequenceMetadataBuilder};
 pub use topology::Topology;
 
