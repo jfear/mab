@@ -67,6 +67,24 @@ scratch files specific to a worktree session, place them in the
 worktree's `.pi/` (create it if needed — it will be cleaned up when the
 worktree is removed).
 
+Create worktrees under `.pi/worktrees/` to keep them co-located and
+easy to find:
+
+```bash
+git worktree add .pi/worktrees/feat-adr-NNNN -b feat/adr-NNNN-short-name
+```
+
+After the feature branch is merged and the PR is closed, clean up:
+
+```bash
+git worktree remove .pi/worktrees/feat-adr-NNNN
+git branch -d feat/adr-NNNN-short-name
+```
+
+Then ask the user whether to delete the corresponding spec, plan, and
+research files from `.pi/` — they may want to keep them for reference
+or clear them out now that the decision has landed in an ADR.
+
 ## ADR Process
 
 Before making or changing a significant architectural decision, check whether an
