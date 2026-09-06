@@ -29,6 +29,13 @@ concern. Internal annotation coordinates are **0-based
 half-open**; derived statistics (length, GC%) are methods, not fields;
 dates and persistence concerns live in a future storage envelope.
 
+Introduce a shared primitive `Interval` type (0-based half-open,
+`start < end` invariant) in `crates/mab-core/src/interval.rs` that
+provides standard interval algebra (overlap, abut, union, intersection,
+containment) and `Range<usize>` interop. `AnnotationInterval` composes
+an `Interval` plus partial-end flags; other subsystems (alignments,
+view windows, selections) reuse the same type.
+
 ## Alternatives Considered
 
 - **Flat core + one nested metadata** (chosen) — core stays lean; optional
@@ -45,6 +52,8 @@ dates and persistence concerns live in a future storage envelope.
   format-specific leftover.
 - ✅ Same sequence → same uid; duplicate imports are impossible.
 - ✅ Alphabet homogeneity enforced via ADR-0006's `<A: Alphabet>`.
+- ✅ `Interval` centralizes the half-open coordinate invariant once;
+  annotation, alignment, and UI subsystems share one type.
 - ❌ Editing the sequence produces a new uid; identical sequences share
   a uid regardless of import source (dedup by design) — distinguishing
   them, if ever needed, is future work (edit-chain / source-identity
@@ -59,13 +68,15 @@ When working in this area, an agent should:
   import escape hatch.
 - **Avoid:** Adding `molecule_type`, `created`, or `modified` fields
   (alphabet typing carries molecule kind; dates are storage-layer); storing
-  derived statistics (length, GC%) as fields.
+  derived statistics (length, GC%) as fields; duplicating the `start < end`
+  invariant outside `Interval`.
 - **Prefer:** The `extras` map over new typed fields for format-specific
-  leftovers; derived methods over stored caches.
+  leftovers; derived methods over stored caches; reusing `Interval` for
+  any new half-open coordinate range.
 - **Ask before changing:** `SequenceMetadata` shape, uid derivation
   strategy, or annotation coordinate convention — all are public API.
 
 ## Links
 
 - Supersedes: ~
-- Related: ADR-0006
+- Related: ADR-0006, ADR-0005
