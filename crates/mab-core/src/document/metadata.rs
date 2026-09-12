@@ -13,11 +13,17 @@ use std::collections::BTreeMap;
 /// Construct via [`SequenceMetadata::builder()`].
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct SequenceMetadata {
+    /// FASTA header remainder or `GenBank` `DEFINITION`.
     description: Option<String>,
+    /// External accession/version identifier.
     accession: Option<String>,
+    /// Source organism name.
     organism: Option<String>,
+    /// NCBI translation-table identifier.
     genetic_code: Option<u32>,
+    /// Ordered taxonomic lineage.
     taxonomy: Option<Vec<String>>,
+    /// Document-level source metadata not modeled as typed fields.
     extras: BTreeMap<String, String>,
 }
 
@@ -41,7 +47,8 @@ impl SequenceMetadata {
     /// assert_eq!(metadata.organism(), Some("Homo sapiens"));
     /// assert_eq!(metadata.genetic_code(), Some(1));
     /// assert_eq!(metadata.taxonomy(), Some(&["Eukaryota".to_owned(), "Metazoa".to_owned()][..]));
-    /// assert_eq!(metadata.extras().get("keywords").map(String::as_str), Some("beta-galactosidase"));
+    /// assert_eq!(metadata.extra("keywords"), Some("beta-galactosidase"));
+    /// assert_eq!(metadata.extras().len(), 1);
     /// ```
     #[must_use]
     pub fn builder() -> SequenceMetadataBuilder {
@@ -68,6 +75,12 @@ impl SequenceMetadata {
     pub fn taxonomy(&self) -> Option<&[String]> {
         self.taxonomy.as_deref()
     }
+    /// Return one source-specific metadata value by key.
+    #[must_use]
+    pub fn extra(&self, key: &str) -> Option<&str> {
+        self.extras.get(key).map(String::as_str)
+    }
+
     #[must_use]
     pub const fn extras(&self) -> &BTreeMap<String, String> {
         &self.extras
@@ -80,11 +93,17 @@ impl SequenceMetadata {
 /// Call [`build()`](Self::build) to produce the final [`SequenceMetadata`].
 #[derive(Debug, Clone, Default)]
 pub struct SequenceMetadataBuilder {
+    /// FASTA header remainder or `GenBank` `DEFINITION`.
     description: Option<String>,
+    /// External accession/version identifier.
     accession: Option<String>,
+    /// Source organism name.
     organism: Option<String>,
+    /// NCBI translation-table identifier.
     genetic_code: Option<u32>,
+    /// Ordered taxonomic lineage.
     taxonomy: Option<Vec<String>>,
+    /// Document-level source metadata not modeled as typed fields.
     extras: BTreeMap<String, String>,
 }
 
@@ -184,6 +203,20 @@ mod tests {
             meta.extras().get("keywords").map(String::as_str),
             Some("beta-galactosidase")
         );
+    }
+
+    #[test]
+    fn extra_returns_value_for_present_key() {
+        let metadata = SequenceMetadata::builder()
+            .extra("keywords", "beta-galactosidase")
+            .build();
+        assert_eq!(metadata.extra("keywords"), Some("beta-galactosidase"));
+    }
+
+    #[test]
+    fn extra_returns_none_for_absent_key() {
+        let metadata = SequenceMetadata::default();
+        assert_eq!(metadata.extra("keywords"), None);
     }
 
     #[test]
