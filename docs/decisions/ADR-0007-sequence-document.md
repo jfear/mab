@@ -21,20 +21,26 @@ Define `SequenceDocument<A: Alphabet>` with a flat core (`uid: Uuid`,
 `name`, `sequence: Sequence<A>`, `topology`, `annotations`) plus one
 nested `SequenceMetadata` struct of `Option`-typed source-derived
 fields (`description`, `accession`, `organism`, `genetic_code`,
-`taxonomy`) and an `extras: BTreeMap` escape hatch for lossless import.
+`taxonomy`) and an `extras: BTreeMap` escape hatch for document-level source metadata.
 The `uid` is a **content-derived v5 UUID** computed at creation via
 `Uuid::new_v5(MAB_NAMESPACE, sequence.as_bytes())` — identity is a pure
-function of sequence content; import provenance is a storage-layer
-concern. Internal annotation coordinates are **0-based
-half-open**; derived statistics (length, GC%) are methods, not fields;
-dates and persistence concerns live in a future storage envelope.
+function of residue bytes and deliberately omits the alphabet tag. Thus,
+identical DNA, RNA, or amino-acid bytes share a uid; storage must not treat
+it as an alphabet-specific record key. Import provenance is a storage-layer
+concern. Internal annotation coordinates are **0-based half-open**; derived
+statistics (length, GC fraction) are methods, not fields; dates and
+persistence concerns live in a future storage envelope.
 
 Introduce a shared primitive `Interval` type (0-based half-open,
 `start < end` invariant) in `crates/mab-core/src/interval.rs` that
 provides standard interval algebra (overlap, abut, union, intersection,
 containment) and `Range<usize>` interop. `AnnotationInterval` composes
 an `Interval` plus partial-end flags; other subsystems (alignments,
-view windows, selections) reuse the same type.
+view windows, selections) reuse the same type. Annotation interval order
+is preserved as source/traversal data; overlap validation uses a sorted
+view without reordering storage. Circular origin spans use two ordinary
+intervals for now. Qualifiers remain a vector because keys may repeat, but
+construction sorts them by `(key, value)` and deduplicates exact pairs.
 
 ## Alternatives Considered
 
@@ -48,9 +54,12 @@ view windows, selections) reuse the same type.
 
 ## Consequences
 
-- ✅ FASTA and GenBank import is lossless; `extras` catches every
-  format-specific leftover.
-- ✅ Same sequence → same uid; duplicate imports are impossible.
+- ✅ Source metadata and qualifiers in the modeled subset are retained;
+  `extras` catches document-level format-specific leftovers.
+- ✅ Same residue bytes → same uid, including across alphabets; duplicate
+  content imports are detectable.
+- ❌ Complete INSDC location fidelity (operators, between-sites, remote
+  locations) requires a future location/I/O ADR.
 - ✅ Alphabet homogeneity enforced via ADR-0006's `<A: Alphabet>`.
 - ✅ `Interval` centralizes the half-open coordinate invariant once;
   annotation, alignment, and UI subsystems share one type.
@@ -63,12 +72,13 @@ view windows, selections) reuse the same type.
 
 When working in this area, an agent should:
 
-- **Preserve:** The content-derived uid contract; 0-based half-open
-  internal coordinates; `Alphabet` homogeneity; `extras` as the lossless
-  import escape hatch.
+- **Preserve:** The content-derived uid contract, including omission of the
+  alphabet tag; 0-based half-open internal coordinates; annotation interval
+  order; qualifier key/value canonicalization; `Alphabet` homogeneity;
+  `extras` as the document-level import escape hatch.
 - **Avoid:** Adding `molecule_type`, `created`, or `modified` fields
   (alphabet typing carries molecule kind; dates are storage-layer); storing
-  derived statistics (length, GC%) as fields; duplicating the `start < end`
+  derived statistics (length, GC fraction) as fields; duplicating the `start < end`
   invariant outside `Interval`.
 - **Prefer:** The `extras` map over new typed fields for format-specific
   leftovers; derived methods over stored caches; reusing `Interval` for
