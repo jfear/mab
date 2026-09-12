@@ -14,8 +14,11 @@ use crate::{Error, Interval, Result, Strand};
 /// is enforced by `Interval`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AnnotationInterval {
+    /// The validated 0-based half-open coordinate range.
     interval: Interval,
+    /// Whether the true start is unknown and lies before `interval.start()`.
     start_partial: bool,
+    /// Whether the true end is unknown and lies after `interval.end()`.
     end_partial: bool,
 }
 
@@ -96,23 +99,38 @@ impl AnnotationInterval {
 /// A sequence annotation (e.g. a `GenBank` feature). Immutable.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SequenceAnnotation {
+    /// Human-readable annotation name; may be empty.
     name: String,
+    /// Feature kind, such as `CDS`; never empty.
     kind: String,
+    /// Disjoint locations in caller/source traversal order.
+    ///
+    /// A two-part span across a circular origin is represented by ordinary
+    /// tail-then-head intervals. Complete INSDC location fidelity is deferred.
     intervals: Vec<AnnotationInterval>,
+    /// Biological direction shared by all annotation intervals.
     strand: Strand,
+    /// `(key, value)` pairs in lexicographic order with exact duplicates removed.
     qualifiers: Vec<(String, String)>,
 }
 
 impl SequenceAnnotation {
-    /// Sorts `intervals` ascending by `start` before storing.
+    /// Preserves `intervals` in caller/source traversal order. A two-part span
+    /// across a circular origin is represented by ordinary tail-then-head
+    /// intervals; this representation does not claim complete INSDC location
+    /// fidelity. Overlap validation inspects a temporary genomic-order view
+    /// without reordering the stored intervals.
+    ///
+    /// Canonicalizes `qualifiers` by sorting on `(key, value)` and removing
+    /// exact duplicate pairs. Repeated keys with distinct values remain.
     ///
     /// # Errors
     ///
     /// - [`Error::EmptyAnnotationKind`] if `kind` is empty.
     /// - [`Error::EmptyAnnotationIntervals`] if `intervals` is empty.
-    /// - [`Error::OverlappingIntervals`] if any two intervals overlap after
-    ///   sorting. Adjacent intervals (`next.start == prev.end`) are allowed;
-    ///   the constructor never merges.
+    /// - [`Error::OverlappingIntervals`] if any two intervals overlap when
+    ///   inspected in genomic order. Adjacent intervals are allowed; the
+    ///   constructor never merges or reorders them.
     /// - [`Error::EmptyQualifierKey`] if any qualifier key is empty
     ///   (empty *values* are allowed: presence qualifiers like `/pseudo`).
     ///
@@ -138,8 +156,8 @@ impl SequenceAnnotation {
         name: impl Into<String>,
         kind: impl Into<String>,
         strand: Strand,
-        mut intervals: Vec<AnnotationInterval>,
-        qualifiers: Vec<(String, String)>,
+        intervals: Vec<AnnotationInterval>,
+        mut qualifiers: Vec<(String, String)>,
     ) -> Result<Self> {
         let kind = kind.into();
         if kind.is_empty() {
@@ -149,25 +167,24 @@ impl SequenceAnnotation {
             return Err(Error::EmptyAnnotationIntervals);
         }
 
-        // Sort ascending by start.
-        intervals.sort_by_key(AnnotationInterval::start);
-
-        // Check for overlaps: after sorting, next.start < prev.end ⇒ overlap.
-        for w in intervals.windows(2) {
-            if w[1].start() < w[0].end() {
+        let mut intervals_by_start: Vec<&AnnotationInterval> = intervals.iter().collect();
+        intervals_by_start.sort_unstable_by_key(|interval| (interval.start(), interval.end()));
+        for window in intervals_by_start.windows(2) {
+            if window[1].start() < window[0].end() {
                 return Err(Error::OverlappingIntervals {
-                    start: w[0].start(),
-                    end: w[0].end(),
+                    start: window[0].start(),
+                    end: window[0].end(),
                 });
             }
         }
 
-        // Validate qualifier keys.
-        for (k, _) in &qualifiers {
-            if k.is_empty() {
+        for (key, _) in &qualifiers {
+            if key.is_empty() {
                 return Err(Error::EmptyQualifierKey);
             }
         }
+        qualifiers.sort_unstable();
+        qualifiers.dedup();
 
         Ok(Self {
             name: name.into(),
@@ -228,18 +245,6 @@ mod tests {
     }
 
     #[test]
-    fn new_rejects_empty_and_reversed_bounds() {
-        assert_eq!(
-            AnnotationInterval::new(5, 5, false, false),
-            Err(Error::InvalidInterval { start: 5, end: 5 })
-        );
-        assert_eq!(
-            AnnotationInterval::new(7, 3, false, false),
-            Err(Error::InvalidInterval { start: 7, end: 3 })
-        );
-    }
-
-    #[test]
     fn from_interval_is_infallible_and_preserves_flags() {
         let iv = Interval::new(2, 9).unwrap();
         let ann = AnnotationInterval::from_interval(iv, true, true);
@@ -270,11 +275,6 @@ mod tests {
     }
 
     #[test]
-    fn span_is_end_minus_start() {
-        assert_eq!(interval(2, 7).span(), 5);
-    }
-
-    #[test]
     fn empty_kind_rejected() {
         let err =
             SequenceAnnotation::new("x", "", Strand::Undirected, vec![interval(0, 1)], vec![])
@@ -300,6 +300,19 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(err, Error::OverlappingIntervals { start: 0, end: 5 });
+    }
+
+    #[test]
+    fn overlapping_intervals_rejected_regardless_of_input_order() {
+        let error = SequenceAnnotation::new(
+            "x",
+            "CDS",
+            Strand::Undirected,
+            vec![interval(10, 20), interval(0, 15)],
+            vec![],
+        )
+        .unwrap_err();
+        assert_eq!(error, Error::OverlappingIntervals { start: 0, end: 15 });
     }
 
     #[test]
@@ -332,23 +345,21 @@ mod tests {
     }
 
     #[test]
-    fn unsorted_input_stored_sorted_ascending() {
-        let ann = SequenceAnnotation::new(
-            "x",
-            "join",
-            Strand::Undirected,
-            vec![interval(50, 60), interval(0, 10), interval(20, 30)],
+    fn interval_input_order_is_preserved() {
+        let annotation = SequenceAnnotation::new(
+            "origin span",
+            "CDS",
+            Strand::Forward,
+            vec![interval(90, 100), interval(0, 10), interval(20, 30)],
             vec![],
         )
         .unwrap();
-        let starts: Vec<usize> = ann
+        let starts: Vec<usize> = annotation
             .intervals()
             .iter()
             .map(AnnotationInterval::start)
             .collect();
-        assert_eq!(starts, vec![0, 20, 50]);
-        assert_eq!(ann.intervals()[0].end(), 10);
-        assert_eq!(ann.intervals()[2].end(), 60);
+        assert_eq!(starts, vec![90, 0, 20]);
     }
 
     #[test]
@@ -365,25 +376,26 @@ mod tests {
     }
 
     #[test]
-    fn duplicate_qualifier_keys_and_order_preserved() {
-        let ann = SequenceAnnotation::new(
+    fn qualifiers_are_sorted_and_exact_duplicates_removed() {
+        let annotation = SequenceAnnotation::new(
             "x",
             "CDS",
             Strand::Undirected,
             vec![interval(0, 1)],
             vec![
-                ("db_xref".to_owned(), "a".to_owned()),
-                ("db_xref".to_owned(), "b".to_owned()),
-                ("gene".to_owned(), "lacZ".to_owned()),
+                ("k2".to_owned(), "v2".to_owned()),
+                ("k1".to_owned(), "v2".to_owned()),
+                ("k1".to_owned(), "v1".to_owned()),
+                ("k1".to_owned(), "v1".to_owned()),
             ],
         )
         .unwrap();
         assert_eq!(
-            ann.qualifiers(),
+            annotation.qualifiers(),
             &[
-                ("db_xref".to_owned(), "a".to_owned()),
-                ("db_xref".to_owned(), "b".to_owned()),
-                ("gene".to_owned(), "lacZ".to_owned()),
+                ("k1".to_owned(), "v1".to_owned()),
+                ("k1".to_owned(), "v2".to_owned()),
+                ("k2".to_owned(), "v2".to_owned()),
             ]
         );
     }
