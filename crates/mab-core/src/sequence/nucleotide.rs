@@ -113,6 +113,10 @@ impl Sequence<IupacDna> {
     /// Ambiguity codes: S counts fully as GC; all others
     /// (R, Y, K, M, B, D, H, V, N) do not.
     ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
+    ///
     /// # Examples
     ///
     /// ```
@@ -155,6 +159,10 @@ impl Sequence<IupacRna> {
     ///
     /// Ambiguity codes: S counts fully as GC; all others
     /// (R, Y, K, M, B, D, H, V, N) do not.
+    ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
     ///
     /// # Examples
     ///

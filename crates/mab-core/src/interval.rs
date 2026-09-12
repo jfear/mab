@@ -15,7 +15,9 @@ use crate::{Error, Result};
 /// validated coordinate range.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Interval {
+    /// Inclusive zero-based start coordinate.
     start: usize,
+    /// Exclusive zero-based end coordinate; always greater than `start`.
     end: usize,
 }
 

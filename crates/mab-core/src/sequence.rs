@@ -37,7 +37,9 @@ pub use alphabet::{Alphabet, IupacAminoAcid, IupacDna, IupacRna};
 /// alphabet.
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Sequence<A: Alphabet> {
+    /// Uppercase residue bytes validated against alphabet `A`.
     residues: Vec<u8>,
+    /// Zero-sized marker that associates the validated residues with `A`.
     _alphabet: PhantomData<A>,
 }
 

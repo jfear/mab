@@ -41,11 +41,20 @@ fn derive_uid(sequence_bytes: &[u8]) -> Uuid {
 /// constructors. Documents are immutable — no mutation methods.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SequenceDocument<A: Alphabet> {
+    /// Content-derived identity computed from the raw sequence bytes.
+    ///
+    /// Identical residue bytes across alphabet marker types share a UID;
+    /// alphabet-specific identity is not encoded.
     uid: Uuid,
+    /// Human-readable document name; may be empty.
     name: String,
+    /// Immutable residues validated against alphabet `A`.
     sequence: Sequence<A>,
+    /// Whether the sequence is linear or circular.
     topology: Topology,
+    /// Embedded annotations whose intervals lie within the sequence bounds.
     annotations: Vec<SequenceAnnotation>,
+    /// Optional source-derived metadata and import extras.
     metadata: SequenceMetadata,
 }
 
@@ -154,9 +163,9 @@ impl<A: Alphabet> SequenceDocument<A> {
 
     /// The content-derived document identity.
     ///
-    /// Note: the uid hashes raw bytes without an alphabet tag, so documents
-    /// with identical residues but different alphabets share a uid. This is
-    /// intentional (identity = content).
+    /// The UID hashes raw residue bytes without an alphabet tag. Identical
+    /// residue bytes across alphabet marker types therefore share a UID;
+    /// alphabet-specific identity is not encoded.
     #[must_use]
     pub const fn uid(&self) -> Uuid {
         self.uid
@@ -206,8 +215,11 @@ impl<A: Alphabet> SequenceDocument<A> {
 }
 
 impl SequenceDocument<IupacDna> {
-    /// GC fraction of the sequence; `None` if empty.
-    /// Forwards to [`Sequence::gc_fraction`].
+    /// GC fraction of the sequence. Forwards to [`Sequence::gc_fraction`].
+    ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
     #[must_use]
     pub fn gc_fraction(&self) -> Option<f64> {
         self.sequence.gc_fraction()
@@ -215,8 +227,11 @@ impl SequenceDocument<IupacDna> {
 }
 
 impl SequenceDocument<IupacRna> {
-    /// GC fraction of the sequence; `None` if empty.
-    /// Forwards to [`Sequence::gc_fraction`].
+    /// GC fraction of the sequence. Forwards to [`Sequence::gc_fraction`].
+    ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
     #[must_use]
     pub fn gc_fraction(&self) -> Option<f64> {
         self.sequence.gc_fraction()
