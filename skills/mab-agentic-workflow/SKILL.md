@@ -22,4 +22,4 @@ For Rust changes, run the focused test first, then `cargo test --workspace`, `ca
 
 ## Closeout
 
-Before final approval, reconcile artifacts, sync the delta specs, and verify no `.agent-work/` material is staged. Do not push, merge, archive, or remove a worktree without the owner’s explicit approval.
+Before final approval, reconcile artifacts, sync the delta specs, and verify no `.agent-work/` material is staged. Before offering archive, require an existing `verify.md` with a READY verdict. Do not push, merge, archive, or remove a worktree without the owner’s explicit approval.

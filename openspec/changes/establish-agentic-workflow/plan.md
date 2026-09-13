@@ -32,8 +32,8 @@
 - [x] Fork `spec-driven` as `agentic-workflow`, add ordered `plan` and `verify` artifacts, and make `plan` the apply prerequisite.
 - [x] Run `openspec schema validate agentic-workflow`; confirm the schema lists six artifacts.
 - [x] Select the new schema in project config and migrate this bootstrap change's metadata.
-- [ ] Create a disposable change with `--schema agentic-workflow`, verify OpenSpec reports `plan` and `verify`, then remove only that disposable change directory.
-- [ ] Commit the schema bootstrap after the disposable validation passes.
+- [x] Create a disposable change with `--schema agentic-workflow`, verify OpenSpec reports `plan` and `verify`, then remove only that disposable change directory.
+- [x] Commit the schema bootstrap after the disposable validation passes.
 
 ## Task 2: Per-worktree agent workspace
 
@@ -44,10 +44,10 @@
 
 **Requirements:** Per-worktree agent workspace isolation.
 
-- [ ] Add `.agent-work/` to `.gitignore` and verify `git check-ignore .agent-work` succeeds.
-- [ ] Add a blocking Worktrunk `pre-start` hook that creates `research`, `reviews`, `plans`, `specs`, and `prompts` below `.agent-work/`.
-- [ ] Run `wt hook pre-start --dry-run` to verify hook rendering without a lifecycle mutation.
-- [ ] Commit the workspace configuration with the schema bootstrap or as a separate configuration commit.
+- [x] Add `.agent-work/` to `.gitignore` and verify `git check-ignore .agent-work` succeeds.
+- [x] Add a blocking Worktrunk `pre-start` hook that creates `research`, `reviews`, `plans`, `specs`, and `prompts` below `.agent-work/`.
+- [x] Run `wt hook pre-start --dry-run` to verify hook rendering without a lifecycle mutation.
+- [x] Commit the workspace configuration with the schema bootstrap or as a separate configuration commit.
 
 ## Task 3: Global skill repository and generic workflow skill
 
@@ -62,11 +62,11 @@
 
 **Requirements:** Reusable workflow skills; durable artifact ownership; synchronization and closeout.
 
-- [ ] Run three representative workflow prompts without the new skill and record baseline failures in the global repository's test notes: an urgent feature, an implementation discovery, and a closeout request.
-- [ ] Create the global Git repository, generic skill with valid Agent Skills frontmatter, and source copy of the minimal OpenSpec schema.
-- [ ] Encode the workflow: read-only exploration; Worktrunk branch before proposal; native OpenSpec change with schema-managed plan/verify; `.agent-work` scratch boundary; spec sync before final review; archive after merge; no autonomous push/merge/archive/delete.
-- [ ] Run the same pressure scenarios with the skill loaded; record outcomes and refine the skill to address demonstrated baseline failures.
-- [ ] Commit the tested global skill repository locally; do not publish or push it.
+- [x] Run three representative workflow prompts without the new skill and record baseline failures in the global repository's test notes: an urgent feature, an implementation discovery, and a closeout request.
+- [x] Create the global Git repository, generic skill with valid Agent Skills frontmatter, and source copy of the minimal OpenSpec schema.
+- [x] Encode the workflow: read-only exploration; Worktrunk branch before proposal; native OpenSpec change with schema-managed plan/verify; `.agent-work` scratch boundary; spec sync before final review; archive after merge; no autonomous push/merge/archive/delete.
+- [x] Run the same pressure scenarios with the skill loaded; record outcomes and refine the skill to address demonstrated baseline failures.
+- [x] Commit the tested global skill repository locally; do not publish or push it.
 
 ## Task 4: Pi global-skill registration
 
@@ -76,9 +76,9 @@
 
 **Requirements:** Reusable workflow skills.
 
-- [ ] Read and preserve the existing Pi settings structure.
-- [ ] Add `/home/jfear/Projects/agent-skills/skills` to its additive `skills` array without removing existing settings.
-- [ ] Start a fresh Pi discovery context or use an equivalent supported inspection to verify `using-openspec-superpowers` is discoverable.
+- [x] Read and preserve the existing Pi settings structure.
+- [x] Add `/home/jfear/Projects/agent-skills/skills` to its additive `skills` array without removing existing settings.
+- [x] Start a fresh Pi discovery context or use an equivalent supported inspection to verify `using-openspec-superpowers` is discoverable.
 
 ## Task 5: Mab adapter skill
 
@@ -88,10 +88,10 @@
 
 **Requirements:** Reusable workflow skills; spec-driven lifecycle; synchronization and closeout.
 
-- [ ] Write a concise project adapter with valid frontmatter that requires the generic skill and provides Mab-specific ADR, Rust verification, domain-research, and Worktrunk constraints.
-- [ ] Verify the adapter's referenced generic-skill name and all repository-relative paths.
-- [ ] Run a Mab change-start and closeout pressure scenario with the adapter; verify it preserves the global workflow while adding project checks.
-- [ ] Commit the adapter and related Mab workflow configuration.
+- [x] Write a concise project adapter with valid frontmatter that requires the generic skill and provides Mab-specific ADR, Rust verification, domain-research, and Worktrunk constraints.
+- [x] Verify the adapter's referenced generic-skill name and all repository-relative paths.
+- [x] Run a Mab change-start and closeout pressure scenario with the adapter; verify it preserves the global workflow while adding project checks.
+- [x] Commit the adapter and related Mab workflow configuration.
 
 ## Task 6: Lifecycle integration verification
 
@@ -102,8 +102,8 @@
 
 **Requirements:** Per-worktree agent workspace isolation; synchronization and closeout.
 
-- [ ] Create a disposable Worktrunk worktree from the feature branch, verify the required `.agent-work/` leaf directories are real directories, then remove that disposable worktree without force flags.
-- [ ] Confirm the primary checkout's `.agent-work/` remains unaffected by the disposable worktree lifecycle.
-- [ ] Run `openspec validate establish-agentic-workflow --strict`, `git diff --check`, and the project Rust verification commands applicable to this documentation/configuration change.
-- [ ] Complete `verify.md` with scenario coverage, commands and results, review conclusions, residual risks, and archive-readiness verdict.
-- [ ] Mark each completed OpenSpec task in `tasks.md`, commit final reconciliation, and request human review.
+- [x] Create a disposable Worktrunk worktree from the feature branch, verify the required `.agent-work/` leaf directories are real directories, then remove that disposable worktree without force flags.
+- [x] Confirm the primary checkout's `.agent-work/` remains unaffected by the disposable worktree lifecycle.
+- [x] Run `openspec validate establish-agentic-workflow --strict`, `git diff --check`, and the project Rust verification commands applicable to this documentation/configuration change.
+- [x] Complete `verify.md` with scenario coverage, commands and results, review conclusions, residual risks, and archive-readiness verdict.
+- [x] Mark each completed OpenSpec task in `tasks.md`, commit final reconciliation, and request human review.

@@ -23,9 +23,9 @@ See `proposal.md` for motivation. Mab has an OpenSpec `spec-driven` setup, globa
 
 ### Own a minimal OpenSpec/Superpowers schema
 
-Mab installs an owned OpenSpec schema that extends the normal change graph with required `plan.md` and `verify.md` artifacts. The schema makes those files visible to OpenSpec status, instructions, validation, and archive rather than relying on an undocumented extra file. Its ordered lifecycle is proposal → specs and design → tasks → plan → implementation → verify → sync/archive.
+Mab installs an owned OpenSpec schema that extends the normal change graph with `plan.md` and `verify.md` artifacts. The schema makes those files visible to OpenSpec status, instructions, and validation rather than relying on undocumented extra files. Its ordered lifecycle is proposal → specs and design → tasks → plan → implementation → verify → sync/archive.
 
-OpenSpec owns the durable proposal, delta specification, design, task, plan, verification, sync, and archive lifecycle. Superpowers creates the detailed plan and implementation evidence through schema instructions. `.agent-work/` holds only drafts and raw material before it is distilled into the durable artifacts.
+OpenSpec does not enforce artifact completion at archive time. Therefore the global workflow closeout is the archive guard: it SHALL inspect the active change, require `verify.md`, and require its READY verdict before it offers archive to the owner. OpenSpec owns the durable proposal, delta specification, design, task, plan, verification, sync, and archive lifecycle. Superpowers creates the detailed plan and implementation evidence through schema instructions. `.agent-work/` holds only drafts and raw material before it is distilled into the durable artifacts.
 
 Superspec was considered because it connects these systems. Mab adopts its useful artifact lifecycle without taking a dependency or retaining its broader apply, review, and finalization receipts.
 

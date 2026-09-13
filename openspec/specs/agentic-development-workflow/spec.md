@@ -1,8 +1,10 @@
+# Agentic Development Workflow Specification
+
 ## Purpose
 
 Defines a repeatable, spec-driven agent workflow that keeps Mab's behavioral documentation current and archives its implementation plans and verification evidence with shipped changes.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Durable artifact ownership
 

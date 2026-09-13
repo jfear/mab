@@ -11,7 +11,7 @@
 ## 3. Global workflow skill source
 
 - [x] 3.1 Create and initialize the version-controlled `~/Projects/agent-skills` repository with the source of its generic workflow skill and minimal OpenSpec schema, then verify the skill has valid Agent Skills frontmatter, Git tracks both sources, and the schema creates the managed plan and verification artifacts.
-- [ ] 3.2 Configure Pi to load the global skill repository, then verify a fresh Pi skill discovery lists the generic workflow skill.
+- [x] 3.2 Configure Pi to load the global skill repository, then verify a fresh Pi skill discovery lists the generic workflow skill.
 - [x] 3.3 Test the generic workflow skill against representative pressure scenarios and refine it until it keeps canonical specs, the archived change-local plan, and the verification record durable while retaining drafts and raw agent material in `.agent-work/`.
 
 ## 4. Mab workflow adapter
@@ -21,5 +21,5 @@
 
 ## 5. Integration validation
 
-- [ ] 5.1 Create and remove a disposable Worktrunk worktree, verifying isolated `.agent-work` creation and cleanup without modifying another checkout.
-- [ ] 5.2 Review the final diff against the OpenSpec change, run OpenSpec strict validation, verify the finalized plan and verification record are schema-managed change artifacts, and verify no `.agent-work` material is staged.
+- [x] 5.1 Create and remove a disposable Worktrunk worktree, verifying isolated `.agent-work` creation and cleanup without modifying another checkout.
+- [x] 5.2 Review the final diff against the OpenSpec change, run OpenSpec strict validation, verify the finalized plan and verification record are schema-managed change artifacts, and verify no `.agent-work` material is staged.
