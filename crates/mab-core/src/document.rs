@@ -41,10 +41,7 @@ fn derive_uid(sequence_bytes: &[u8]) -> Uuid {
 /// constructors. Documents are immutable — no mutation methods.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SequenceDocument<A: Alphabet> {
-    /// Content-derived identity computed from the raw sequence bytes.
-    ///
-    /// Identical residue bytes across alphabet marker types share a UID;
-    /// alphabet-specific identity is not encoded.
+    /// Content-derived identity computed from the validated, normalized sequence bytes.
     uid: Uuid,
     /// Human-readable document name; may be empty.
     name: String,
@@ -161,11 +158,10 @@ impl<A: Alphabet> SequenceDocument<A> {
         })
     }
 
-    /// The content-derived document identity.
-    ///
-    /// The UID hashes raw residue bytes without an alphabet tag. Identical
-    /// residue bytes across alphabet marker types therefore share a UID;
-    /// alphabet-specific identity is not encoded.
+    /// The UID hashes `Sequence::as_bytes()` without an alphabet tag.
+    /// Because `Sequence` normalizes residues to uppercase, differently cased
+    /// source input with the same residues produces the same UID. Identical
+    /// residue bytes across alphabet marker types also share a UID.
     #[must_use]
     pub const fn uid(&self) -> Uuid {
         self.uid

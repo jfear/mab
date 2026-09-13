@@ -44,12 +44,14 @@ pub enum Error {
     #[error("annotation has no intervals")]
     EmptyAnnotationIntervals,
 
-    /// Two annotation intervals overlap (the colliding boundary).
-    #[error("overlapping annotation intervals at {start}..{end}")]
+    /// One of two overlapping annotation intervals.
+    ///
+    /// `start..end` identifies the earlier interval in genomic sort order.
+    #[error("annotation interval {start}..{end} overlaps another interval")]
     OverlappingIntervals {
-        /// Start of the colliding interval boundary.
+        /// Start of the earlier overlapping interval.
         start: usize,
-        /// End of the colliding interval boundary.
+        /// End of the earlier overlapping interval.
         end: usize,
     },
 

@@ -1,9 +1,9 @@
 //! Sequence metadata for documents.
 //!
-//! [`SequenceMetadata`] holds optional, source-derived metadata grouped so
-//! that "what came from the file" is one value. Unknown key/value pairs from
-//! a lossless import land in `extras`. See ADR-0007
-//! (`docs/decisions/ADR-0007-sequence-document.md`).
+//! [`SequenceMetadata`] groups optional source-derived metadata.
+//! Document-level key/value metadata not represented by typed fields can be
+//! retained in `extras`; complete source-format round-tripping is an I/O-layer concern.
+//! See ADR-0007 (`docs/decisions/ADR-0007-sequence-document.md`).
 
 use std::collections::BTreeMap;
 
