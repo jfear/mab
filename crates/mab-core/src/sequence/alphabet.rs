@@ -33,6 +33,7 @@ pub trait Alphabet: private::Sealed + Send + Sync + 'static {
 /// Valid residues are the 15 uppercase letters `ACGTRYSWKMBDHVN`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct IupacDna {
+    /// Private zero-sized field preventing direct external construction.
     _private: PhantomData<()>,
 }
 
@@ -41,6 +42,7 @@ pub struct IupacDna {
 /// Valid residues are the 15 uppercase letters `ACGURYSWKMBDHVN`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct IupacRna {
+    /// Private zero-sized field preventing direct external construction.
     _private: PhantomData<()>,
 }
 
@@ -50,6 +52,7 @@ pub struct IupacRna {
 /// `ACDEFGHIKLMNPQRSTVWY` plus `XBZ*`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct IupacAminoAcid {
+    /// Private zero-sized field preventing direct external construction.
     _private: PhantomData<()>,
 }
 

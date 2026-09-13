@@ -23,6 +23,50 @@ pub enum Error {
         /// Human-readable name of the alphabet.
         alphabet: &'static str,
     },
+
+    /// Interval is invalid: `start` must be strictly less than `end`.
+    ///
+    /// Shared by `Interval` and all types that compose it (e.g.
+    /// `AnnotationInterval`).
+    #[error("invalid interval: start {start} must be less than end {end}")]
+    InvalidInterval {
+        /// The rejected interval start.
+        start: usize,
+        /// The rejected interval end.
+        end: usize,
+    },
+
+    /// An annotation's kind must not be empty.
+    #[error("annotation kind is empty")]
+    EmptyAnnotationKind,
+
+    /// An annotation must have at least one interval.
+    #[error("annotation has no intervals")]
+    EmptyAnnotationIntervals,
+
+    /// One of two overlapping annotation intervals.
+    ///
+    /// `start..end` identifies the earlier interval in genomic sort order.
+    #[error("annotation interval {start}..{end} overlaps another interval")]
+    OverlappingIntervals {
+        /// Start of the earlier overlapping interval.
+        start: usize,
+        /// End of the earlier overlapping interval.
+        end: usize,
+    },
+
+    /// A qualifier key must not be empty (values may be).
+    #[error("annotation qualifier key is empty")]
+    EmptyQualifierKey,
+
+    /// An annotation interval exceeds the sequence bounds.
+    #[error("annotation interval end {end} exceeds sequence length {sequence_len}")]
+    AnnotationOutOfBounds {
+        /// The rejected interval end.
+        end: usize,
+        /// The length of the sequence the interval was validated against.
+        sequence_len: usize,
+    },
 }
 
 #[cfg(test)]
@@ -47,5 +91,53 @@ mod tests {
         assert!(msg.contains("'!'"), "{msg}");
         assert!(msg.contains("at position 4"), "{msg}");
         assert!(msg.contains("for IUPAC DNA"), "{msg}");
+    }
+
+    #[test]
+    fn invalid_interval_display_includes_bounds() {
+        let msg = Error::InvalidInterval { start: 5, end: 5 }.to_string();
+        assert!(msg.contains("start 5"), "{msg}");
+        assert!(msg.contains("end 5"), "{msg}");
+    }
+
+    #[test]
+    fn empty_annotation_kind_display_mentions_kind() {
+        assert_eq!(
+            Error::EmptyAnnotationKind.to_string(),
+            "annotation kind is empty"
+        );
+    }
+
+    #[test]
+    fn empty_annotation_intervals_display_mentions_intervals() {
+        assert_eq!(
+            Error::EmptyAnnotationIntervals.to_string(),
+            "annotation has no intervals"
+        );
+    }
+
+    #[test]
+    fn overlapping_intervals_display_includes_boundary() {
+        let msg = Error::OverlappingIntervals { start: 3, end: 7 }.to_string();
+        assert!(msg.contains("3..7"), "{msg}");
+    }
+
+    #[test]
+    fn empty_qualifier_key_display_mentions_key() {
+        assert_eq!(
+            Error::EmptyQualifierKey.to_string(),
+            "annotation qualifier key is empty"
+        );
+    }
+
+    #[test]
+    fn annotation_out_of_bounds_display_includes_end_and_length() {
+        let msg = Error::AnnotationOutOfBounds {
+            end: 12,
+            sequence_len: 10,
+        }
+        .to_string();
+        assert!(msg.contains("end 12"), "{msg}");
+        assert!(msg.contains("length 10"), "{msg}");
     }
 }

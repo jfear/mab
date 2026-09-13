@@ -107,6 +107,40 @@ impl Sequence<IupacDna> {
             .collect();
         Sequence::from_validated_unchecked(residues)
     }
+
+    /// Fraction of G, C, S residues in `[0.0, 1.0]`; `None` if empty.
+    ///
+    /// Ambiguity codes: S counts fully as GC; all others
+    /// (R, Y, K, M, B, D, H, V, N) do not.
+    ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use mab_core::sequence::{IupacDna, Sequence};
+    ///
+    /// let seq = Sequence::<IupacDna>::try_new("ACGT").unwrap();
+    /// assert_eq!(seq.gc_fraction(), Some(0.5));
+    /// ```
+    #[must_use]
+    #[expect(
+        clippy::cast_precision_loss,
+        reason = "fraction precision is irrelevant for GC%"
+    )]
+    pub fn gc_fraction(&self) -> Option<f64> {
+        if self.is_empty() {
+            return None;
+        }
+        let gc_count = self
+            .residues
+            .iter()
+            .filter(|&&b| matches!(b, b'G' | b'C' | b'S'))
+            .count();
+        Some(gc_count as f64 / self.len() as f64)
+    }
 }
 
 impl Sequence<IupacRna> {
@@ -119,6 +153,40 @@ impl Sequence<IupacRna> {
             .map(|b| if b == b'U' { b'T' } else { b })
             .collect();
         Sequence::from_validated_unchecked(residues)
+    }
+
+    /// Fraction of G, C, S residues in `[0.0, 1.0]`; `None` if empty.
+    ///
+    /// Ambiguity codes: S counts fully as GC; all others
+    /// (R, Y, K, M, B, D, H, V, N) do not.
+    ///
+    /// The calculated f64 is finite and in [0.0, 1.0].
+    /// None means the sequence is empty.
+    /// Percentage conversion, formatting, and rounding are presentation concerns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use mab_core::sequence::{IupacRna, Sequence};
+    ///
+    /// let seq = Sequence::<IupacRna>::try_new("ACGU").unwrap();
+    /// assert_eq!(seq.gc_fraction(), Some(0.5));
+    /// ```
+    #[must_use]
+    #[expect(
+        clippy::cast_precision_loss,
+        reason = "fraction precision is irrelevant for GC%"
+    )]
+    pub fn gc_fraction(&self) -> Option<f64> {
+        if self.is_empty() {
+            return None;
+        }
+        let gc_count = self
+            .residues
+            .iter()
+            .filter(|&&b| matches!(b, b'G' | b'C' | b'S'))
+            .count();
+        Some(gc_count as f64 / self.len() as f64)
     }
 }
 
@@ -193,5 +261,46 @@ mod tests {
         let seq = Sequence::<IupacDna>::try_new("acgt").unwrap();
         assert_eq!(seq.complement().as_str(), "TGCA");
         assert_eq!(seq.reverse_complement().as_str(), "ACGT");
+    }
+
+    #[test]
+    fn dna_gc_fraction_hand_computed_values() {
+        let acgt = Sequence::<IupacDna>::try_new("ACGT").unwrap();
+        assert_eq!(acgt.gc_fraction(), Some(0.5));
+        let gggg = Sequence::<IupacDna>::try_new("GGGG").unwrap();
+        assert_eq!(gggg.gc_fraction(), Some(1.0));
+        let aaaa = Sequence::<IupacDna>::try_new("AAAA").unwrap();
+        assert_eq!(aaaa.gc_fraction(), Some(0.0));
+    }
+
+    #[test]
+    fn dna_gc_fraction_ambiguity_codes() {
+        // S (G or C) counts fully as GC.
+        let s = Sequence::<IupacDna>::try_new("S").unwrap();
+        assert_eq!(s.gc_fraction(), Some(1.0));
+        // R (A or G) does not.
+        let r = Sequence::<IupacDna>::try_new("R").unwrap();
+        assert_eq!(r.gc_fraction(), Some(0.0));
+        // Mixed: GCSA ⇒ 3 of 4.
+        let mixed = Sequence::<IupacDna>::try_new("GCSA").unwrap();
+        assert_eq!(mixed.gc_fraction(), Some(0.75));
+    }
+
+    #[test]
+    fn dna_gc_fraction_empty_is_none() {
+        let empty = Sequence::<IupacDna>::try_new("").unwrap();
+        assert_eq!(empty.gc_fraction(), None);
+    }
+
+    #[test]
+    fn rna_gc_fraction_hand_computed_values() {
+        let acgu = Sequence::<IupacRna>::try_new("ACGU").unwrap();
+        assert_eq!(acgu.gc_fraction(), Some(0.5));
+        let gccu = Sequence::<IupacRna>::try_new("GCCU").unwrap();
+        assert_eq!(gccu.gc_fraction(), Some(0.75));
+        let s = Sequence::<IupacRna>::try_new("S").unwrap();
+        assert_eq!(s.gc_fraction(), Some(1.0));
+        let empty = Sequence::<IupacRna>::try_new("").unwrap();
+        assert_eq!(empty.gc_fraction(), None);
     }
 }
