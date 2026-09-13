@@ -22,3 +22,4 @@ coverage/
 
 # Agent working files
 .pi/
+.agent-work/
