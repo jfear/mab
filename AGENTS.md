@@ -24,6 +24,11 @@ with deliberate, spec-driven, ADR-documented design.
 ## Conventions
 
 - Prefer explicit, readable code over cleverness.
+- The global `rust-style-guide` skill is the idiom baseline; this project's
+  conventions (clippy::pedantic/nursery, error-handling split, crate
+  boundaries) take precedence where they differ. If Mab's established
+  patterns diverge from the guide, Mab wins — flag the divergence, don't
+  relitigate it in review.
 - Keep `mab-core` free of application/framework dependencies; it owns domain
   types and algorithms.
 - Document significant architectural choices as ADRs in `docs/decisions/`.
@@ -56,34 +61,17 @@ documents used only during development.
 .pi/
 ├── specs/       # Implementation specs (self-contained API + behavior)
 ├── plans/       # Phase-by-phase implementation plans
-└── research/    # Background research, comparisons, invariant deep-dives
+├── research/    # Background research, comparisons, invariant deep-dives
+└── sdd/         # Per-plan subagent-driven-development scratch: task briefs,
+                # implementer reports, review packages, progress ledger.
+                # Auto-managed and self-gitignored; safe to delete once the
+                # plan's work is merged (git history is the record).
 ```
 
-When working in a **git worktree**, `.pi/` is not part of the worktree
-because it is gitignored and untracked. The agent may need to read specs
-or plans from the **main repository's** `.pi/` directory rather than
-expecting them in the worktree. If the workflow creates temporary
-scratch files specific to a worktree session, place them in the
-worktree's `.pi/` (create it if needed — it will be cleaned up when the
-worktree is removed).
-
-Create worktrees under `.pi/worktrees/` to keep them co-located and
-easy to find:
-
-```bash
-git worktree add .pi/worktrees/feat-adr-NNNN -b feat/adr-NNNN-short-name
-```
-
-After the feature branch is merged and the PR is closed, clean up:
-
-```bash
-git worktree remove .pi/worktrees/feat-adr-NNNN
-git branch -d feat/adr-NNNN-short-name
-```
-
-Then ask the user whether to delete the corresponding spec, plan, and
-research files from `.pi/` — they may want to keep them for reference
-or clear them out now that the decision has landed in an ADR.
+Worktree setup, teardown, artifact cleanup, and the `.pi/`-in-a-worktree
+rules are handled by the global superpowers skills (`using-git-worktrees`,
+`finishing-a-development-branch`, `subagent-driven-development`,
+`cleanup-dev-artifacts`) — no project-specific overrides are needed.
 
 ## ADR Process
 
