@@ -1,0 +1,2 @@
+[pre-start]
+agent-work = "mkdir -p .agent-work/research .agent-work/reviews .agent-work/plans .agent-work/specs .agent-work/prompts"
